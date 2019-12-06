@@ -5,7 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
 const { NODE_ENV } = require('./config');
-const bookmarkRoutes = require('./bookmarkRoutes')
+const bookmarkRoutes = require('./bookmarkRoutes');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -43,19 +43,11 @@ app.use(helmet());
 app.use(cors());
 app.use(bookmarkRoutes);
 
-// Routes
-app.get('/', (req, res) => {
-  res.status(200);
-  res.send('Hello World');
-});
-
-
 app.use(function errorHandler(error, req, res, next) {
   let response;
   if (NODE_ENV === 'production') {
     response = { error: { message: 'server error' } };
   } else {
-    console.error(error);
     response = { message: error.message, error };
   }
   res.status(500).json(response);
