@@ -2,6 +2,9 @@ const express = require('express');
 const bookmarks = require('./data');
 const bookmarkRoutes = express.Router();
 const winston = require('winston');
+const uuid = require('uuid/v4');
+
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
@@ -14,6 +17,38 @@ bookmarkRoutes.route('/bookmarks')
   .get((req, res) => {
     res.json(bookmarks);
   })
+
+  .post ((req,res) => {
+  const { title, content} = req.body;
+    if (!title) {
+      logger.error(`Title is required`);
+      return res
+      .status(400)
+      .send('Invalid data');
+    }
+    if (!content) {
+      logger.error(`Content is required`);
+      return res
+      .status(400)
+      .send('Invalid data');
+    }
+    const id = uuid();
+
+    const bookmark = {
+      id,
+      title,
+      content
+    };
+
+    bookmarks.push(bookmark);
+
+    logger.info(`Bookmark with id ${id} created`);
+    res
+    .status(201)
+    .location(`http://localhost:8000/bookmarks/${id}`)
+    .json(bookmark);
+  })
+
 
 bookmarkRoutes.route('/bookmarks/:bookmarkId')
   .get((req, res) => {
@@ -28,5 +63,22 @@ bookmarkRoutes.route('/bookmarks/:bookmarkId')
 
     res.json(bookmark);
   })
+  .delete((req, res) => {
+   const id = request.params.id  
+   const bookmarkIndex = bookmarks.findIndex(bm => bm.id == id);
+
+   if (bookmarkIndex === -1) {
+     logger.error(`List with id ${id} not found.`);
+     return res
+      .status(404)
+      .send('Not found');
+   }
+   bookmarks.splice(bookmarkIndex, 1);
+
+   logger.info(`List with id ${id} deleted.`);
+   res
+    .status(204)
+    .end();
+  });
 
 module.exports = bookmarkRoutes;
