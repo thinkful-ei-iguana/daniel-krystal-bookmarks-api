@@ -65,7 +65,7 @@ bookmarkRoutes.route('/bookmarks/:id')
     res.json(bookmark);
   })
   .delete((req, res) => {
-    const id = req.params.bookmarkId;
+    const id = req.params.id
     const bookmarkIndex = bookmarks.findIndex(bm => bm.id === id);
 
     if (bookmarkIndex === -1) {
