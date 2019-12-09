@@ -49,13 +49,12 @@ bookmarkRoutes.route('/bookmarks')
       .status(201)
       .location(`http://localhost:8000/bookmarks/${id}`)
       .json(bookmark);
-  })
+  });
 
 
-bookmarkRoutes.route('/bookmarks/:bookmarkId')
+bookmarkRoutes.route('/bookmarks/:id')
   .get((req, res) => {
-    console.log(req.params);
-    const bookmark = bookmarks.find(bm => bm.id === req.params.bookmarkId);
+    const bookmark = bookmarks.find(bm => bm.id === req.params.id);
     if (!bookmark) {
       logger.error(`Card with id ${req.params} not found`);
       return res
@@ -66,8 +65,8 @@ bookmarkRoutes.route('/bookmarks/:bookmarkId')
     res.json(bookmark);
   })
   .delete((req, res) => {
-    const id = req.params.id  
-    const bookmarkIndex = bookmarks.findIndex(bm => bm.id == id);
+    const id = req.params.bookmarkId;
+    const bookmarkIndex = bookmarks.findIndex(bm => bm.id === id);
 
     if (bookmarkIndex === -1) {
       logger.error(`List with id ${id} not found.`);
